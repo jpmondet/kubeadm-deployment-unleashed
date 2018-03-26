@@ -1,0 +1,4 @@
+---
+- import_playbook: prequisites.yaml
+- import_playbook: masters.yaml
+- import_playbook: workers.yaml
