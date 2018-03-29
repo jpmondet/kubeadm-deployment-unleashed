@@ -1,0 +1,16 @@
+[masters]
+server01
+
+[workers]
+server0[2:4]
+
+[databases]
+server01
+
+[cluster:children]
+masters
+workers
+databases
+
+[admin_machines]
+oob-mgmt-server

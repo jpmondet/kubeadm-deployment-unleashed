@@ -1,13 +1,4 @@
 ---
-- name: Install Docker & tools
-  apt:
-    name: "{{ item }}"
-  with_items:
-    - docker.io
-    - rsync
-    - python-apt
-    - python3-apt
-
 - name: Get keys of kube repo  
   apt_key:
     url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
@@ -17,7 +8,7 @@
     repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
     state: present
 
-- name: Install kube components
+- name: Install kube prequisites
   apt:
     update_cache: yes
     name: "{{ item }}"
@@ -25,47 +16,72 @@
     - kubeadm
     - kubectl
     - kubelet
+    - docker.io
+    - rsync
+    - python-apt
+    - python3-apt
 
-
-- name: Get prequisites
+- name: Wget prequisites froom google storage
   get_url:
     url: "{{ item }}"
     dest: /tmp/
   with_items: 
-    - "https://pkg.cfssl.org/R1.2/cfssl_linux-amd64"
-    - "https://pkg.cfssl.org/R1.2/cfssljson_linux-amd64"
-    - "https://storage.googleapis.com/kubernetes-release/release/v1.9.0/bin/linux/amd64/kubectl"
-    - "https://github.com/coreos/etcd/releases/download/v3.2.11/etcd-v3.2.11-linux-amd64.tar.gz"
-    - "https://storage.googleapis.com/kubernetes-release/release/v1.9.0/bin/linux/amd64/kube-apiserver"
-    - "https://storage.googleapis.com/kubernetes-release/release/v1.9.0/bin/linux/amd64/kube-controller-manager"
-    - "https://storage.googleapis.com/kubernetes-release/release/v1.9.0/bin/linux/amd64/kube-scheduler"
-    - "https://github.com/containernetworking/plugins/releases/download/v0.6.0/cni-plugins-amd64-v0.6.0.tgz"
-    - "https://github.com/kubernetes-incubator/cri-containerd/releases/download/v1.0.0-beta.0/cri-containerd-1.0.0-beta.0.linux-amd64.tar.gz"
-    - "https://storage.googleapis.com/kubernetes-release/release/v1.9.0/bin/linux/amd64/kube-proxy"
+    - "https://storage.googleapis.com/kubernetes-release/release/{{ k8s_release }}/bin/linux/amd64/kubectl"
+    - "https://storage.googleapis.com/kubernetes-release/release/{{ k8s_release }}/bin/linux/amd64/kubeadm"
+    - "https://storage.googleapis.com/kubernetes-release/release/{{ k8s_release }}/bin/linux/amd64/kubelet"
+    - "https://raw.githubusercontent.com/kubernetes/kubernetes/{{ k8s_release }}/build/debs/kubelet.service"
+    - "https://raw.githubusercontent.com/kubernetes/kubernetes/{{ k8s_release }}/build/debs/10-kubeadm.conf"
+    - "https://github.com/containernetworking/plugins/releases/download/{{ cni_version }}/cni-plugins-amd64-{{ cni_version }}.tgz"
     - "https://storage.googleapis.com/kubernetes-the-hard-way/kube-dns.yaml"
-    - "https://storage.googleapis.com/kubernetes-release/release/v1.9.0/bin/linux/amd64/kubelet"
   tags: pre
 
-- name: Giving rights to execute files
-  file:
-    path: "/tmp/{{ item }}"
-    mode: "u+x"
-  with_items: 
-    - cfssl_linux-amd64
-    - cfssljson_linux-amd64
-    - kubectl
-    - kube-apiserver
-    - kube-controller-manager
-    - kube-scheduler
-  tags: pre
+- name: Creating missing directories
+  file: 
+    path="{{ item }}"
+    state=directory
+  with_items:
+    - /etc/systemd/system/kubelet.service.d/
+    - /opt/cni/bin
 
 - name: Copying admin files to bin
   copy:
     src: "/tmp/{{ item }}"
-    dest: /usr/local/bin/
+    dest: /usr/bin/
     mode: "u+x"
   with_items:
+    - kubeadm
     - kubectl
-    - cfssl_linux-amd64
-    - cfssljson_linux-amd64
-  tags: pre
+    - kubelet
+
+- name: Untaring & moving cni files
+  unarchive:
+    src: "/tmp/cni-plugins-amd64-{{ cni_version }}.tgz"
+    dest: "/opt/cni/bin"
+
+- name: Copying kubeadm service file
+  copy:
+    src: "/tmp/{{ item }}"
+    dest: /etc/systemd/system/kubelet.service.d/
+    mode: "u+x"
+  with_items:
+    - 10-kubeadm.conf
+
+- name: Copying kubelet service file
+  copy:
+    src: "/tmp/{{ item }}"
+    dest: /etc/systemd/system/
+    mode: "u+x"
+  with_items:
+    - kubelet.service
+
+- name: daemon reload
+  systemd: 
+    daemon_reload: yes
+
+- name: Start services
+  service: 
+    name: "{{ item }}"
+    enabled: yes
+    state: started
+  with_items:
+    - kubectl
