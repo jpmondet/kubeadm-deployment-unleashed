@@ -1,0 +1,6 @@
+---
+- hosts: cluster
+  become: True
+  roles: 
+    - role: networking
+      tags: net

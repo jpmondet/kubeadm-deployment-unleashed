@@ -1,12 +1,5 @@
 ---
 
 - name: Kubeadm initialization
-  shell: "kubeadm init --pod-network-cidr={{ cluster_cidr }} --apiserver-advertise-address={{ master_ip }}"
+  shell: "kubeadm init --pod-network-cidr={{ cluster_cidr }} --apiserver-advertise-address={{ master_ip }} --token {{ kubeadm_token }}"
 
-- name: Applying calico as a network solution
-  shell: "kubectl apply -f {{ calico_yaml }}"
-  when: network_solution == "calico"
-
-- name: Adding calioctl
-  shell: "kubectl apply -f {{ calicoctl_yaml }}"
-  when: network_solution == "calico"

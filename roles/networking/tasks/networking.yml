@@ -1,0 +1,29 @@
+---
+- name: Applying calico as a network solution
+  shell: "kubectl apply -f {{ calico_yaml }}"
+  when: 
+    - network_solution == "calico"
+    - 'masters' in group_names
+
+- name: Adding calioctl
+  shell: "kubectl apply -f {{ calicoctl_yaml }}"
+  when: 
+    - network_solution == "calico"
+    - 'masters' in group_names
+
+- name: Network solution choosen need the cni.d directory
+  file: 
+    path="{{ item }}"
+    state=directory
+  with_items:
+    - /etc/cni/net.d/
+  when: simple_cni_solution
+
+- name: Copying Bridge files on minion(s)
+  template: 
+    src: "10-bridge-conf.j2"
+    dest: "/etc/cni/net.d/10-bridge.conf"
+  when: 
+    - simple_cni_solution
+    - network_solution == "bridge"
+

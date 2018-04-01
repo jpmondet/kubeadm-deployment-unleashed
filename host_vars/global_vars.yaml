@@ -9,7 +9,7 @@
 #
 k8s_release: v1.9.3
 cni_version: v0.7.0
-kubeadm_token: 8e55d0.a7c84ff93597fcaa
+kubeadm_token: 7cb4a1.df899180a95cc374
 #
 # WARNING !!!!
 # Some solutions (like calico) have some constraints on the adressing scheme without tweaking the yaml :
