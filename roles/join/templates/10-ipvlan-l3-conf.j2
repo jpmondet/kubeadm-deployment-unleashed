@@ -1,0 +1,14 @@
+{
+    "cniVersion": "{{ cni_version }}",
+    "name": "ipvlan-l3",
+    "type": "ipvlan",
+    "master": "eth1",
+    "mode": "l3"
+    "ipam": {
+        "type": "host-local",
+        "subnet": "{{ pod_cidr }}",
+        "routes": [
+            { "dst": "0.0.0.0/0" }
+        ]
+    }
+}
