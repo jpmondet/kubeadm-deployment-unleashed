@@ -1,5 +1,11 @@
 ---
 
 - name: Kubeadm initialization
-  shell: "kubeadm init --pod-network-cidr={{ cluster_cidr }} --apiserver-advertise-address={{ master_ip }} --token {{ kubeadm_token }}"
+  shell: "kubeadm init --pod-network-cidr={{ cluster_cidr }}  \
+                       --apiserver-advertise-address={{ master_ip }} \
+                       --token {{ kubeadm_token }} \
+                       --service-cluster-ip-range={{ service_ip }}
+                       --feature-gates 'CoreDNS={{ coredns }}' \
+                       --skip-token-print \
+                       --kubernetes-version {{ k8s_version }}"
 

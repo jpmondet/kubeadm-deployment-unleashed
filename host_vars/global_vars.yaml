@@ -29,6 +29,7 @@ service_ip: 85.85.0.0/16 # Why 85 ? Because it looks like 8s in k8s ;-)
 dns_addon: True #Or false if you don't want the DNS cluster add-on
 cluster_dns: 85.85.85.85  
 cluster_cidr: 172.16.0.0/16
+coredns: false
 #
 ## Misc for certificates
 #
