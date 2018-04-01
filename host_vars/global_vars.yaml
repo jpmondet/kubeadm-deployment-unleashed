@@ -7,7 +7,7 @@
 #
 ## Global envs ##
 #
-k8s_release: 1.9.3
+k8s_release: v1.9.3
 cni_version: v0.7.0
 kubeadm_token: 8e55d0.a7c84ff93597fcaa
 #
