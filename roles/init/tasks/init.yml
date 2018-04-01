@@ -5,8 +5,8 @@
 
 - name: Applying calico as a network solution
   shell: "kubectl apply -f {{ calico_yaml }}"
-  when: "network_solution == calico"
+  when: network_solution == "calico"
 
 - name: Adding calioctl
   shell: "kubectl apply -f {{ calicoctl_yaml }}"
-  when: "network_solution == calico"
+  when: network_solution == "calico"

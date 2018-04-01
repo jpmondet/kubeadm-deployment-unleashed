@@ -48,6 +48,7 @@
     src: "/tmp/{{ item }}"
     dest: /usr/bin/
     mode: "u+x"
+    remote_src: yes
   with_items:
     - kubeadm
     - kubectl
@@ -57,12 +58,14 @@
   unarchive:
     src: "/tmp/cni-plugins-amd64-{{ cni_version }}.tgz"
     dest: "/opt/cni/bin"
+    remote_src: yes
 
 - name: Copying kubeadm service file
   copy:
     src: "/tmp/{{ item }}"
     dest: /etc/systemd/system/kubelet.service.d/
     mode: "u+x"
+    remote_src: yes
   with_items:
     - 10-kubeadm.conf
 
@@ -71,6 +74,7 @@
     src: "/tmp/{{ item }}"
     dest: /etc/systemd/system/
     mode: "u+x"
+    remote_src: yes
   with_items:
     - kubelet.service
 
@@ -84,4 +88,4 @@
     enabled: yes
     state: started
   with_items:
-    - kubectl
+    - kubelet

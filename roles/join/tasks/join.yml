@@ -6,13 +6,15 @@
     state=directory
   with_items:
     - /etc/cni/net.d/
-  when: simple_cni_solution == True
+  when: simple_cni_solution == "True"
 
 - name: Copying Bridge files on minion(s)
   template: 
     src: "10-bridge-conf.j2"
     dest: "/etc/cni/net.d/10-bridge.conf"
-  when: simple_cni_solution == True and network_solution == bridge
+  when: 
+    - simple_cni_solution == "True"
+    - network_solution == "bridge"
 
 - name: Kubeadm join on workers
   shell: "kubeadm join --token {{ kubeadm_token }} {{ master_ip }}:6443"
