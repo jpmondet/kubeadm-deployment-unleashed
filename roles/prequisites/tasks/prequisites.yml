@@ -33,7 +33,6 @@
     - "https://raw.githubusercontent.com/kubernetes/kubernetes/{{ k8s_release }}/build/debs/10-kubeadm.conf"
     - "https://github.com/containernetworking/plugins/releases/download/{{ cni_version }}/cni-plugins-amd64-{{ cni_version }}.tgz"
     - "https://storage.googleapis.com/kubernetes-the-hard-way/kube-dns.yaml"
-  tags: pre
 
 - name: Creating missing directories
   file: 

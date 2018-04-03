@@ -1,4 +1,4 @@
 ---
 - name: Kubeadm join on workers
-  shell: "kubeadm join --token {{ kubeadm_token }} {{ master_ip }}:6443 --discovery-token-unsafe-skip-ca-verification"
+  shell: "kubeadm join --token {{ kubeadm_token }} {{ master_ip }}:{{ master_port }} --discovery-token-unsafe-skip-ca-verification"
 

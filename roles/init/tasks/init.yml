@@ -1,5 +1,4 @@
 ---
-
 - name: Kubeadm initialization
   shell: "kubeadm init --pod-network-cidr={{ cluster_cidr }}  \
                        --apiserver-advertise-address={{ master_ip }} \
@@ -8,4 +7,40 @@
                        --feature-gates 'CoreDNS={{ coredns }}' \
                        --skip-token-print \
                        --kubernetes-version {{ k8s_version }}"
+  when: phases == "simple"
 
+- name: Kubeadm pre-flights
+  shell: "kubeadm alpha preflight"
+  when: phases == "custom"
+
+- name: Kubeadm certs
+  shell: "kubeadm alpha certs"
+  when: phases == "custom"
+
+- name: Kubeadm kubeconfig
+  shell: "kubeadm alpha kubeconfig"
+  when: phases == "custom"
+
+- name: Kubeadm controlplane
+  shell: "kubeadm alpha controlplane"
+  when: phases == "custom"
+
+- name: Kubeadm etcd
+  shell: "kubeadm alpha etcd"
+  when: phases == "custom"
+
+- name: Kubeadm identifiying masters
+  shell: "kubeadm alpha mark-master"
+  when: phases == "custom"
+
+- name: Kubeadm token bootstraping
+  shell: "kubeadm alpha bootstrap-token"
+  when: phases == "custom"
+
+- name: Kubeadm storing conf in ConfigMaps
+  shell: "kubeadm alpha upload-config"
+  when: phases == "custom"
+
+- name: Kubeadm addons
+  shell: "kubeadm alpha addons"
+  when: phases == "custom"

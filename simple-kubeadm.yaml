@@ -1,5 +1,0 @@
----
-- import_playbook: prequisites.yaml
-- import_playbook: masters.yaml
-- import_playbook: networking.yaml
-- import_playbook: workers.yaml

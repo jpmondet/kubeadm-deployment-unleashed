@@ -27,3 +27,19 @@
     - simple_cni_solution
     - network_solution == "bridge"
 
+- name: Copying l2 ipvlan files on minion(s)
+  template: 
+    src: "10-ipvlan-conf.j2"
+    dest: "/etc/cni/net.d/10-ipvlan.conf"
+  when: 
+    - simple_cni_solution
+    - network_solution == "bridge"
+
+- name: Copying l3 ipvlan files on minion(s)
+  template: 
+    src: "10-ipvlan-l3-conf.j2"
+    dest: "/etc/cni/net.d/10-ipvlan.conf"
+  when: 
+    - simple_cni_solution
+    - network_solution == "bridge"
+
