@@ -1,0 +1,45 @@
+---
+- name: Wget istio files
+  get_url:
+    url: "{{ item }}"
+    dest: /tmp/
+  with_items: 
+    - "https://github.com/istio/istio/releases/download/{{ istio_version }}/istio-{{ istio_version }}-linux.tar.gz"
+
+- name: Untaring & moving istio files
+  unarchive:
+    src: "/tmp/istio-{{ istio_version }}-linux.tar.gz"
+    dest: "/opt/istio-{{ istio_version }}/"
+    remote_src: yes
+
+- name: Actually adding istio to the cluster
+  shell: "export PATH=/opt/istio-{{ istio_version }}/bin:$PATH ; kubectl apply -f /opt/istio-{{ istio_version }}/bin/install/kubernetes/istio.yaml"
+  when: not istio_auth
+
+- name: Actually adding istio to the cluster
+  shell: "export PATH=/opt/istio-{{ istio_version }}/bin:$PATH ; kubectl apply -f /opt/istio-{{ istio_version }}/bin/install/kubernetes/istio-auth.yaml"
+  when: istio_auth
+
+- name: Automatic sidecar Injection - Creating cert 
+  shell: "/opt/istio-{{ istio_version }}/bin/install/kubernetes/webhook-create-signed-cert.sh \
+    --service istio-sidecar-injector \
+    --namespace istio-system \
+    --secret sidecar-injector-certs"
+  when: auto_sidecar_inject
+
+- name: Automatic sidecar Injection - configmap 
+  shell: "kubectl apply -f /opt/istio-{{ istio_version }}/bin/install/kubernetes/istio-sidecar-injector-configmap-release.yaml"
+  when: auto_sidecar_inject
+
+- name: Automatic sidecar Injection - Actually adding auto_sidecar_inject 
+  shell: "kubectl apply -f /opt/istio-{{ istio_version }}/bin/install/kubernetes/istio-sidecar-injector-with-ca-bundle.yaml"
+  when: auto_sidecar_inject
+
+- name: Next step - deploying apps with istio
+  debug: >
+"kubectl label namespace <namespace> istio-injection=enabled
+kubectl create -n <namespace> -f <your-app-spec>.yaml
+
+If you do not have the Istio-sidecar-injector installed, you must use istioctl kube-inject to manually inject Envoy containers in your application pods before deploying them:
+
+kubectl create -f <(istioctl kube-inject -f <your-app-spec>.yaml)"
