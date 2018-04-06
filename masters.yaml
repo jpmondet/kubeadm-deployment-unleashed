@@ -4,5 +4,3 @@
   roles: 
     - role: init
       tags: init
-    - role: addons
-      tags: add
