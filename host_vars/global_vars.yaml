@@ -8,7 +8,8 @@
 ## Global envs ##
 #
 k8s_release: v1.9.3
-cni_version: v0.7.0
+cni_version: v0.7.0 # This is the real release version of the cni plugins
+cni_config_version: 0.3.1 # This version is needed in the bridges/ipvlan/etc config files
 kubeadm_token: 7cb4a1.df899180a95cc374
 phases: simple # Or 'custom' to use customized phases (and the variables related)
 #
