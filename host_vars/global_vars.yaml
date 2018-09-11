@@ -24,7 +24,7 @@ calicoctl_yaml: https://docs.projectcalico.org/v3.0/getting-started/kubernetes/i
 ## Essential network variables ##
 #
 simple_cni_solution: true # If it is a default solution from the cni project (like bridge or ipvlan)
-network_solution: bridge # could be any cni (ex: bridge, ipvlan, ..) or addons (calico, flannel,...)
+network_solution: cilium # could be any cni (ex: bridge, ipvlan, ..) or addons (calico, flannel,...)
 # For a cni solution, there are templates in the "join" role. You can tweak them if you want/need
 master_ip: 11.11.11.11  # Also known as API Endpoint or apiserver IP
 master_port: 6443  # Also known as API Endpoint or apiserver Port

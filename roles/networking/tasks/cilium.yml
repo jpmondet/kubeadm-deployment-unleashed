@@ -1,0 +1,17 @@
+---
+- name: Mount bpffs
+  mount:
+    path: /sys/fs/bpf
+    src: bpffs
+    fstype: bpf
+    state: mounted
+
+- name: Copy cilium.yaml with etcd infos
+  template:
+    src: cilium.j2
+    dest: /tmp/cilium.yaml
+  when: 'masters' in group_names
+
+- name: Adding Cilium
+  shell: "kubectl apply -f /tmp/cilium.yaml""
+  when: 'masters' in group_names

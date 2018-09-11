@@ -37,4 +37,3 @@
     dest: "/etc/cni/net.d/10-ipvlan.conf"
   when: 
     - simple_cni_solution and network_solution == "ipvlan-l3"
-

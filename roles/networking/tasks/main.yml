@@ -1,3 +1,5 @@
 ---
 - include_vars: "{{ playbook_dir }}/host_vars/global_vars.yaml"
 - include_tasks: networking.yml
+- include_tasks: cilium.yml
+  when: network_solution == "cilium"
