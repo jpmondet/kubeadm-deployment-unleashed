@@ -7,7 +7,7 @@
 #
 ## Global envs ##
 #
-k8s_release: v1.11.1
+k8s_release: v1.11.2
 cni_version: v0.7.0 # This is the real release version of the cni plugins
 cni_config_version: 0.3.1 # This version is needed in the bridges/ipvlan/etc config files
 kubeadm_token: 7cb4a1.df899180a95cc374
@@ -23,7 +23,7 @@ calicoctl_yaml: https://docs.projectcalico.org/v3.0/getting-started/kubernetes/i
 #
 ## Essential network variables ##
 #
-simple_cni_solution: true # If it is a default solution from the cni project (like bridge or ipvlan)
+simple_cni_solution: false # If it is a default solution from the cni project (like bridge or ipvlan)
 network_solution: cilium # could be any cni (ex: bridge, ipvlan, ..) or addons (calico, flannel,...)
 # For a cni solution, there are templates in the "join" role. You can tweak them if you want/need
 master_ip: 11.11.11.11  # Also known as API Endpoint or apiserver IP
@@ -31,7 +31,7 @@ master_port: 6443  # Also known as API Endpoint or apiserver Port
 service_ip: 85.85.0.0/16 # Why 85 ? Because it looks like 8s in k8s ;-)
 cluster_dns: 85.85.85.85  
 cluster_cidr: 172.16.0.0/16
-coredns: false # If false, will use kubedns as a default
+coredns: true # If false, will use kubedns as a default
 #
 ## Some cookies on top of the icecream
 #

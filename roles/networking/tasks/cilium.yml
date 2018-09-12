@@ -1,4 +1,22 @@
 ---
+  #Passing --pod-network-cidr option to kubeadm init is not required, but highly recommended.
+  #
+  #These commands will deploy Cilium with its own etcd managed by etcd operator.
+  #
+  ## Download required manifests from Cilium repository
+  #wget https://github.com/cilium/cilium/archive/v1.2.0.zip
+  #unzip v1.2.0.zip
+  #cd cilium-1.2.0/examples/kubernetes/addons/etcd-operator
+  #
+  ## Generate and deploy etcd certificates
+  #export CLUSTER_DOMAIN=$(kubectl get ConfigMap --namespace kube-system coredns -o yaml | awk '/kubernetes/ {print $2}')
+  #tls/certs/gen-cert.sh $CLUSTER_DOMAIN
+  #tls/deploy-certs.sh
+  #
+  ## Label kube-dns with fixed identity label
+  #kubectl label -n kube-system pod $(kubectl -n kube-system get pods -l k8s-app=kube-dns -o jsonpath='{range .items[]}{.metadata.name}{" "}{end}') io.cilium.fixed-identity=kube-dns
+  #
+  #kubectl create -f ./
 - name: Mount bpffs
   mount:
     path: /sys/fs/bpf
@@ -6,12 +24,42 @@
     fstype: bpf
     state: mounted
 
-- name: Copy cilium.yaml with etcd infos
-  template:
+- name: Copy cilium archive to use etcd operator
+  get_url:
+    src: https://github.com/cilium/cilium/archive/v1.2.1.zip 
+    dest: /tmp/
+  delegate_to: {{ groups['masters'][0] }}
+
+- name: Unarchive
+  unarchive:
+    src: /tmp/v1.2.1.zip
+    dest: /tmp/
+    remote_src: yes
+  delegate_to: {{ groups['masters'][0] }}
+
+- name: gen tls
+  shell: /tmp/cilium-1.2.0/examples/kubernetes/addons/etcd-operator/tls/certs/gen-cert.sh cluster.local
+  delegate_to: {{ groups['masters'][0] }}
+
+- name: deploy certs
+  shell: /tmp/cilium-1.2.0/examples/kubernetes/addons/etcd-operator/tls/deploy-certs.sh
+  delegate_to: {{ groups['masters'][0] }}
+
+- name: Label dns pod for cilium
+  shell: kubectl label -n kube-system pod $(kubectl -n kube-system get pods -l k8s-app=kube-dns -o jsonpath='{range .items[]}{.metadata.name}{" "}{end}') io.cilium.fixed-identity=kube-dns
+  delegate_to: {{ groups['masters'][0] }}
+
+- name: deploy etcd for cilium
+  shell: kubectl create -f /tmp/cilium-1.2.0/examples/kubernetes/addons/etcd-operator/
+  delegate_to: {{ groups['masters'][0] }}
+
+- name: Copy cilium.yaml file
+  template: 
     src: cilium.j2
     dest: /tmp/cilium.yaml
-  when: 'masters' in group_names
+  delegate_to: {{ groups['masters'][0] }}
 
 - name: Adding Cilium
-  shell: "kubectl apply -f /tmp/cilium.yaml""
-  when: 'masters' in group_names
+  shell: "kubectl apply -f /tmp/cilium.yaml"
+  delegate_to: {{ groups['masters'][0] }}
+
