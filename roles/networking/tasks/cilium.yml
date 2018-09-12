@@ -28,38 +28,37 @@
   get_url:
     src: https://github.com/cilium/cilium/archive/v1.2.1.zip 
     dest: /tmp/
-  delegate_to: {{ groups['masters'][0] }}
+  delegate_to: "{{ groups['masters'][0] }}"
 
 - name: Unarchive
   unarchive:
     src: /tmp/v1.2.1.zip
     dest: /tmp/
     remote_src: yes
-  delegate_to: {{ groups['masters'][0] }}
+  delegate_to: "{{ groups['masters'][0] }}"
 
 - name: gen tls
   shell: /tmp/cilium-1.2.0/examples/kubernetes/addons/etcd-operator/tls/certs/gen-cert.sh cluster.local
-  delegate_to: {{ groups['masters'][0] }}
+  delegate_to: "{{ groups['masters'][0] }}"
 
 - name: deploy certs
   shell: /tmp/cilium-1.2.0/examples/kubernetes/addons/etcd-operator/tls/deploy-certs.sh
-  delegate_to: {{ groups['masters'][0] }}
+  delegate_to: "{{ groups['masters'][0] }}"
 
 - name: Label dns pod for cilium
   shell: kubectl label -n kube-system pod $(kubectl -n kube-system get pods -l k8s-app=kube-dns -o jsonpath='{range .items[]}{.metadata.name}{" "}{end}') io.cilium.fixed-identity=kube-dns
-  delegate_to: {{ groups['masters'][0] }}
+  delegate_to: "{{ groups['masters'][0] }}"
 
 - name: deploy etcd for cilium
   shell: kubectl create -f /tmp/cilium-1.2.0/examples/kubernetes/addons/etcd-operator/
-  delegate_to: {{ groups['masters'][0] }}
+  delegate_to: "{{ groups['masters'][0] }}"
 
 - name: Copy cilium.yaml file
   template: 
     src: cilium.j2
     dest: /tmp/cilium.yaml
-  delegate_to: {{ groups['masters'][0] }}
+  delegate_to: "{{ groups['masters'][0] }}"
 
 - name: Adding Cilium
   shell: "kubectl apply -f /tmp/cilium.yaml"
-  delegate_to: {{ groups['masters'][0] }}
-
+  delegate_to: "{{ groups['masters'][0] }}"
