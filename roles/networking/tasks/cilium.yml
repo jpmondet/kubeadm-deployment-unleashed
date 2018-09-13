@@ -26,7 +26,7 @@
 
 - name: Copy cilium archive to use etcd operator
   get_url:
-    src: https://github.com/cilium/cilium/archive/v1.2.1.zip 
+    url: https://github.com/cilium/cilium/archive/v1.2.1.zip 
     dest: /tmp/
   delegate_to: "{{ groups['masters'][0] }}"
 
