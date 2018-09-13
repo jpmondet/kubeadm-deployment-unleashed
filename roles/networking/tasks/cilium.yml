@@ -32,17 +32,17 @@
 
 - name: Unarchive
   unarchive:
-    src: /tmp/v1.2.1.zip
+    src: /tmp/cilium-1.2.1.zip
     dest: /tmp/
     remote_src: yes
   delegate_to: "{{ groups['masters'][0] }}"
 
 - name: gen tls
-  shell: /tmp/cilium-1.2.0/examples/kubernetes/addons/etcd-operator/tls/certs/gen-cert.sh cluster.local
+  shell: /tmp/cilium-1.2.1/examples/kubernetes/addons/etcd-operator/tls/certs/gen-cert.sh cluster.local
   delegate_to: "{{ groups['masters'][0] }}"
 
 - name: deploy certs
-  shell: /tmp/cilium-1.2.0/examples/kubernetes/addons/etcd-operator/tls/deploy-certs.sh
+  shell: /tmp/cilium-1.2.1/examples/kubernetes/addons/etcd-operator/tls/deploy-certs.sh
   delegate_to: "{{ groups['masters'][0] }}"
 
 - name: Label dns pod for cilium
@@ -50,7 +50,7 @@
   delegate_to: "{{ groups['masters'][0] }}"
 
 - name: deploy etcd for cilium
-  shell: kubectl create -f /tmp/cilium-1.2.0/examples/kubernetes/addons/etcd-operator/
+  shell: kubectl create -f /tmp/cilium-1.2.1/examples/kubernetes/addons/etcd-operator/
   delegate_to: "{{ groups['masters'][0] }}"
 
 - name: Copy cilium.yaml file
