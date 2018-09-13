@@ -30,6 +30,11 @@
     dest: /tmp/
   delegate_to: "{{ groups['masters'][0] }}"
 
+- name: Install unzip to unarchive...
+  apt:
+    name: unzip
+    state: present
+
 - name: Unarchive
   unarchive:
     src: /tmp/cilium-1.2.1.zip
