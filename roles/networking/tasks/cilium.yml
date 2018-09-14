@@ -22,11 +22,10 @@
 - name: Get new kernel
   get_url:
     url: "{{ item }}"
-    dest: "/tmp/{{ item }}"
+    dest: /tmp/
   with_items:
     - http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.18.7/linux-image-unsigned-4.18.7-041807-generic_4.18.7-041807.201809090930_amd64.deb
     - http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.18.7/linux-modules-4.18.7-041807-generic_4.18.7-041807.201809090930_amd64.deb
-    - http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.18.7/linux-headers-4.18.7-041807-generic_4.18.7-041807.201809090930_amd64.deb
   when: ubuntu_kernel
 
 - name: Install new kernel
@@ -35,7 +34,6 @@
   with_items:
     - linux-modules-4.18.7-041807-generic_4.18.7-041807.201809090930_amd64.deb
     - linux-image-unsigned-4.18.7-041807-generic_4.18.7-041807.201809090930_amd64.deb
-    - linux-headers-4.18.7-041807-generic_4.18.7-041807.201809090930_amd64.deb
   when: ubuntu_kernel
 
 - name: Reload the boxes for new kernel
