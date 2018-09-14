@@ -21,7 +21,7 @@
 # Upgrading kernel is needed since we are on 4.4
 - name: Get new kernel
   get_url:
-    url: http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.18.7/linux-image-4.18.7-041807-generic_4.18.7-041807.201809090930_i386.deb 
+    url: http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.18.7/linux-image-unsigned-4.18.7-041807-generic_4.18.7-041807.201809090930_amd64.deb
     dest: /tmp/kernel.deb
   when: ubuntu_kernel
 
@@ -61,7 +61,7 @@
   apt:
     name: "{{ item }}"
     state: present
-  with:
+  with_items:
     - unzip
 
 - name: Install cilium scripts dependencies
@@ -69,7 +69,7 @@
     url: "https://pkg.cfssl.org/R1.2/{{ item }}_linux-amd64"
     dest: "/usr/local/bin/{{ item }}"
     mode: 755
-  with:
+  with_items:
     - cfssl
     - cfssljson
 
