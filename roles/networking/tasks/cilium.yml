@@ -102,12 +102,12 @@
   shell: kubectl create -f /tmp/cilium-1.2.1/examples/kubernetes/addons/etcd-operator/
   delegate_to: "{{ groups['masters'][0] }}"
 
-- name: Copy cilium.yaml file
-  template: 
-    src: cilium.j2
-    dest: /tmp/cilium.yaml
-  delegate_to: "{{ groups['masters'][0] }}"
-
-- name: Adding Cilium
-  shell: "kubectl apply -f /tmp/cilium.yaml"
-  delegate_to: "{{ groups['masters'][0] }}"
+  #- name: Copy cilium.yaml file
+  #  template: 
+  #    src: cilium.j2
+  #    dest: /tmp/cilium.yaml
+  #  delegate_to: "{{ groups['masters'][0] }}"
+  #
+  #- name: Adding Cilium
+  #  shell: "kubectl apply -f /tmp/cilium.yaml"
+  #  delegate_to: "{{ groups['masters'][0] }}"
